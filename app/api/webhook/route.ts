@@ -1,4 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { CohereClientV2 } from 'cohere-ai';
+
+const cohere = new CohereClientV2({
+  token: process.env.COHERE_API_KEY || '',
+});
+
 
 async function sendMessage(chatId: number, text: string) {
     const response = await fetch(
@@ -41,11 +47,42 @@ export async function POST(request: NextRequest) {
           // Send welcome message
           await sendMessage(chatId, "Welcome! I'm your cross-gen bot.");
         } else {
-          // Handle any other text with default response
-          await sendMessage(
-            chatId,
-            "Give me 1 day, and I will speak like ChatGPT"
-          );
+          // Use Cohere to generate response
+          try {
+            if (!process.env.COHERE_API_KEY) {
+              throw new Error("COHERE_API_KEY is not set");
+            }
+            
+            const response = await cohere.chat({
+              model: 'command-a-03-2025',
+              messages: [
+                {
+                  role: 'user',
+                  content: text,
+                },
+              ],
+            });
+
+            // Extract text from response.message.content array
+            let cohereText = "Sorry, I couldn't generate a response.";
+            if (response.message?.content && Array.isArray(response.message.content)) {
+              const textContent = response.message.content
+                .filter((item: any) => item.type === 'text')
+                .map((item: any) => item.text)
+                .join('');
+              if (textContent) {
+                cohereText = textContent;
+              }
+            }
+            
+            await sendMessage(chatId, cohereText);
+          } catch (error) {
+            console.error("Cohere API error:", error);
+            await sendMessage(
+              chatId,
+              "Sorry, I'm having trouble processing your message right now."
+            );
+          }
         }
       }
   
