@@ -18,9 +18,9 @@ async function sendMessage(chatId: number, text: string) {
     if (!response.ok) {
       console.error("Failed to send message to Telegram:", await response.text());
     }
-  }
+}
 
-  export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest) {
     try {
       const body = await request.json();
   
@@ -57,11 +57,11 @@ async function sendMessage(chatId: number, text: string) {
         { status: 500 }
       );
     }
-  }
+}
 
-  export async function GET() {
+export async function GET() {
     return NextResponse.json({
       message: "Telegram webhook endpoint is running",
       timestamp: new Date().toISOString(),
     });
-  }
+}
