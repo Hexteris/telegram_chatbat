@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
 
       if (text) {
         if (text === "/start") {
-          // Send welcome messages
+          // Send welcome message
           await sendMessage(chatId, "Welcome! I'm your AI assistant powered by Cohere. How can I help you today?");
         } else {
           // Use Cohere to generate response
