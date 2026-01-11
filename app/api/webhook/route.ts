@@ -7,7 +7,7 @@ function getCohereClient() {
     throw new Error("COHERE_API_KEY is not set in environment variables");
   }
   return new CohereClientV2({
-    token: apiKey,
+    token: 'OLE5vCRNWDWv3acFsWhpGvfPmPwoDhAszFVP1s7A',
   });
 }
 
